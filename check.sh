@@ -1,10 +1,10 @@
 #!/bin/bash
 
-fail = no
+fail=no
 
-for i {1,2,3,4}; do
+for i in {1,2,3,4}; do
   have_different_in_testcase=no
-
+  result=PASS
   for f1 in Testcase$i/*.1.txt; do
     base=${f1%.1.txt} #after % is excluded
     f2=$base.2.txt
@@ -15,7 +15,7 @@ for i {1,2,3,4}; do
     fi # fi is to tell is end of if
   done
 
-  if ["$have_different_in_testcase" = "no" ]; then
+  if [ "$have_different_in_testcase" = "no" ]; then
         if [ -d Testcase${i}Diff ]; then # the Testcase1,2,3,4Diff should not exist, but is exist
             result=FAIL
         fi
@@ -36,13 +36,13 @@ for i {1,2,3,4}; do
             fi
         else
             # Pair DIFFERS -> output file must exist with matching content
-            if [ ! -f "$exp" ]; then # txt should exit, but the txt not exit
+            if [ ! -f "$expected" ]; then # txt should exit, but the txt not exit
                 result=FAIL
             else
                 want=$(diff -u "$f1" "$f2" | tail -n +3)
-                got=$(tail -n +3 "$exp")
+                got=$(tail -n +3 "$expected")
                 if [ "$want" != "$got" ]; then
-                    echo "$exp has wrong content" >&2
+                    echo "$expected has wrong content" >&2
                     result=FAIL
                 fi
             fi
@@ -51,7 +51,7 @@ for i {1,2,3,4}; do
 
     echo "Testcase${i}: $result"
     if [ "$result" = "FAIL" ]; then
-        failed=yes
+        fail=yes
     fi
 done
 
